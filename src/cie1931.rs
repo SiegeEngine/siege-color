@@ -1,6 +1,7 @@
 
 use srgb::LinearSRGB;
 
+#[derive(Debug, Clone)]
 pub struct Cie1931 {
     pub x: f32,
     pub y: f32,
@@ -26,6 +27,7 @@ impl Cie1931 {
 }
 
 // CIE 1931 xyY colorspace
+#[derive(Debug, Clone)]
 pub struct Cie1931xy {
     pub x: f32,
     pub y: f32

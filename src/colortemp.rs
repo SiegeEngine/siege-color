@@ -2,6 +2,7 @@
 use cie1931::Cie1931xy;
 
 // Color Temperature in Kelvin
+#[derive(Debug, Clone, Copy)]
 pub struct ColorTemp(pub u16);
 
 impl ColorTemp {
