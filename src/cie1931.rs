@@ -17,14 +17,10 @@ impl Cie1931 {
     }
 
     pub fn to_linear_srgb(&self) -> LinearSRGB {
-        let red =    3.2406 * self.x - 1.5372 * self.y - 0.4986 * self.z;
-        let green = -0.9689 * self.x + 1.8758 * self.y + 0.0415 * self.z;
-        let blue =   0.0557 * self.x - 0.2040 * self.y + 1.0570 * self.z;
-
         LinearSRGB {
-            r: red,
-            g: green,
-            b: blue,
+            r:  3.2406 * self.x - 1.5372 * self.y - 0.4986 * self.z,
+            g: -0.9689 * self.x + 1.8758 * self.y + 0.0415 * self.z,
+            b:  0.0557 * self.x - 0.2040 * self.y + 1.0570 * self.z,
         }
     }
 }

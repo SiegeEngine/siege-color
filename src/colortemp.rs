@@ -56,3 +56,33 @@ impl ColorTemp {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_planckian_locus() {
+        let ct = ColorTemp::new(2222);
+        let xy = ct.to_cie1931xy().unwrap();
+        assert!(xy.x > 0.5030);
+        assert!(xy.x < 0.5035);
+        assert!(xy.y > 0.4151);
+        assert!(xy.y < 0.4154);
+
+        let ct = ColorTemp::new(4000);
+        let xy = ct.to_cie1931xy().unwrap();
+        assert!(xy.x > 0.3802);
+        assert!(xy.x < 0.3807);
+        assert!(xy.y > 0.3766);
+        assert!(xy.y < 0.3769);
+
+        let ct = ColorTemp::new(10000);
+        let xy = ct.to_cie1931xy().unwrap();
+        assert!(xy.x > 0.2805);
+        assert!(xy.x < 0.2808);
+        assert!(xy.y > 0.2882);
+        assert!(xy.y < 0.2884);
+
+    }
+}
