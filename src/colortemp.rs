@@ -84,6 +84,5 @@ mod tests {
         assert!(xy.x < 0.2808);
         assert!(xy.y > 0.2882);
         assert!(xy.y < 0.2884);
-
     }
 }
