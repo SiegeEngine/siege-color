@@ -2,17 +2,17 @@
 use cie1931::Cie1931;
 
 #[derive(Debug, Clone)]
-pub struct SrgbU8(pub u8, pub u8, pub u8);
+pub struct Srgb24(pub u8, pub u8, pub u8);
 
-impl SrgbU8 {
-    pub fn new(r: u8, g: u8, b: u8) -> SrgbU8 {
-        SrgbU8(r,g,b)
+impl Srgb24 {
+    pub fn new(r: u8, g: u8, b: u8) -> Srgb24 {
+        Srgb24(r,g,b)
     }
 }
 
-impl From<Srgb> for SrgbU8 {
-    fn from(srgb: Srgb) -> SrgbU8 {
-        SrgbU8(
+impl From<Srgb> for Srgb24 {
+    fn from(srgb: Srgb) -> Srgb24 {
+        Srgb24(
             (srgb.r * 256.0).floor() as u8,
             (srgb.g * 256.0).floor() as u8,
             (srgb.b * 256.0).floor() as u8
@@ -158,7 +158,7 @@ mod tests {
         let xyz = Cie1931::new(0.25, 0.40, 0.10);
         let lsrgb: LinearSrgb = From::from(xyz);
         let srgb: Srgb = From::from(lsrgb);
-        let srgbu: SrgbU8 = From::from(srgb);
+        let srgbu: Srgb24 = From::from(srgb);
         assert_eq!(srgbu.0, 106);
         assert_eq!(srgbu.1, 190);
         assert_eq!(srgbu.2, 55);
