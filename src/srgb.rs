@@ -1,7 +1,7 @@
 
 use cie1931::Cie1931;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Srgb24(pub u8, pub u8, pub u8);
 
 impl Srgb24 {
@@ -13,10 +13,20 @@ impl Srgb24 {
 impl From<Srgb> for Srgb24 {
     fn from(srgb: Srgb) -> Srgb24 {
         Srgb24(
-            (srgb.r * 256.0).floor() as u8,
-            (srgb.g * 256.0).floor() as u8,
-            (srgb.b * 256.0).floor() as u8
+            (srgb.r * 255.0).round() as u8,
+            (srgb.g * 255.0).round() as u8,
+            (srgb.b * 255.0).round() as u8
         )
+    }
+}
+
+impl From<Srgb24> for Srgb {
+    fn from(srgb24: Srgb24) -> Srgb {
+        Srgb {
+            r: srgb24.0 as f32 / 255.0,
+            g: srgb24.1 as f32 / 255.0,
+            b: srgb24.2 as f32 / 255.0,
+        }
     }
 }
 
@@ -72,17 +82,11 @@ impl LinearSrgb {
 impl From<Cie1931> for LinearSrgb {
     fn from(input: Cie1931) -> LinearSrgb {
         LinearSrgb {
-            // From https://en.wikipedia.org/wiki/SRGB
-            r:  3.2406 * input.x - 1.5372 * input.y - 0.4986 * input.z,
-            g: -0.9689 * input.x + 1.8758 * input.y + 0.0415 * input.z,
-            b:  0.0557 * input.x - 0.2040 * input.y + 1.0570 * input.z,
-
-            /* This one may be for CIE RGB, which is not the same as linear sRGB
-            // https://en.wikipedia.org/w/index.php?title=CIE_1931_color_space&action=edit&section=13
-            r: 0.41847 * input.x - 0.15866 * input.y - 0.082835 * input.z,
-            g: -0.091169 * input.x - 0.25243 * input.y - 0.015708 * input.z,
-            b: 0.00092090 * input.x - 0.0025498 * input.y + 0.17860 * input.z,
-             */
+            // From https://en.wikipedia.org/wiki/SRGB and
+            // https://www.image-engineering.de/library/technotes/958-how-to-convert-between-srgb-and-ciexyz
+            r:  3.2404542 * input.x - 1.5371385 * input.y - 0.4985314 * input.z,
+            g: -0.9692660 * input.x + 1.8760108 * input.y + 0.0415560 * input.z,
+            b:  0.0556434 * input.x - 0.2040259 * input.y + 1.0572252 * input.z,
         }
     }
 }
@@ -90,16 +94,12 @@ impl From<Cie1931> for LinearSrgb {
 impl From<LinearSrgb> for Cie1931 {
     fn from(input: LinearSrgb) -> Cie1931 {
         Cie1931 {
-            x: 0.4124 * input.r + 0.3576 * input.g + 0.1805 * input.b,
-            y: 0.2126 * input.r + 0.7152 * input.g + 0.0722 * input.b,
-            z: 0.0193 * input.r + 0.1192 * input.g + 0.9505 * input.b,
-
-            /* This one may be for CIE RGB, which is not the same as linear sRGB
-            // https://en.wikipedia.org/w/index.php?title=CIE_1931_color_space&action=edit&section=13
-            x: (0.490   * input.r + 0.310   * input.g + 0.200    * input.b) / 0.17697,
-            y: (0.17697 * input.r + 0.81240 * input.g + 0.010630 * input.b) / 0.17697,
-            z: (0.0000  * input.r + 0.010000 * input.g + 0.99000 * input.b) / 0.17697,
-             */
+            // From https://en.wikipedia.org/wiki/SRGB and
+            // https://www.image-engineering.de/library/technotes/958-how-to-convert-between-srgb-and-ciexyz
+            // Reference point of D65 (as defined by sRGB) -- be warned, ICC profiles use D50.
+            x: 0.4124564 * input.r + 0.3575761 * input.g + 0.1804375 * input.b,
+            y: 0.2126729 * input.r + 0.7151522 * input.g + 0.0721750 * input.b,
+            z: 0.0193339 * input.r + 0.1191920 * input.g + 0.9503041 * input.b,
         }
     }
 }
@@ -179,6 +179,14 @@ mod tests {
         x.set_brightness(0.2);
         assert!(x.get_brightness() > 0.199999);
         assert!(x.get_brightness() < 0.200001);
+    }
+
+    #[test]
+    fn test_to_and_from_24() {
+        let srgb24 = Srgb24(1,64,255);
+        let srgb: Srgb = From::from(srgb24.clone());
+        let srgb24_2: Srgb24 = From::from(srgb);
+        assert_eq!(srgb24, srgb24_2);
     }
 
     #[test]
