@@ -68,16 +68,44 @@ impl LinearSrgb {
     }
 }
 
+// Perhaps use the method here instead:
 impl From<Cie1931> for LinearSrgb {
     fn from(input: Cie1931) -> LinearSrgb {
         LinearSrgb {
+            // From https://en.wikipedia.org/wiki/SRGB
             r:  3.2406 * input.x - 1.5372 * input.y - 0.4986 * input.z,
             g: -0.9689 * input.x + 1.8758 * input.y + 0.0415 * input.z,
             b:  0.0557 * input.x - 0.2040 * input.y + 1.0570 * input.z,
+
+            /* This one may be for CIE RGB, which is not the same as linear sRGB
+            // https://en.wikipedia.org/w/index.php?title=CIE_1931_color_space&action=edit&section=13
+            r: 0.41847 * input.x - 0.15866 * input.y - 0.082835 * input.z,
+            g: -0.091169 * input.x - 0.25243 * input.y - 0.015708 * input.z,
+            b: 0.00092090 * input.x - 0.0025498 * input.y + 0.17860 * input.z,
+             */
         }
     }
 }
 
+impl From<LinearSrgb> for Cie1931 {
+    fn from(input: LinearSrgb) -> Cie1931 {
+        Cie1931 {
+            x: 0.4124 * input.r + 0.3576 * input.g + 0.1805 * input.b,
+            y: 0.2126 * input.r + 0.7152 * input.g + 0.0722 * input.b,
+            z: 0.0193 * input.r + 0.1192 * input.g + 0.9505 * input.b,
+
+            /* This one may be for CIE RGB, which is not the same as linear sRGB
+            // https://en.wikipedia.org/w/index.php?title=CIE_1931_color_space&action=edit&section=13
+            x: (0.490   * input.r + 0.310   * input.g + 0.200    * input.b) / 0.17697,
+            y: (0.17697 * input.r + 0.81240 * input.g + 0.010630 * input.b) / 0.17697,
+            z: (0.0000  * input.r + 0.010000 * input.g + 0.99000 * input.b) / 0.17697,
+             */
+        }
+    }
+}
+
+// Perhaps use the method here instead:
+//   https://en.wikipedia.org/w/index.php?title=CIE_1931_color_space&action=edit&section=13
 impl From<Srgb> for LinearSrgb {
     fn from(srgb: Srgb) -> LinearSrgb {
         let f = |x: f32| -> f32 {
@@ -154,7 +182,25 @@ mod tests {
     }
 
     #[test]
+    fn test_to_and_from_cie1931() {
+        let lsrgb = LinearSrgb {
+            r: 0.5,
+            g: 0.2,
+            b: 0.7
+        };
+        let xyz: Cie1931 = From::from(lsrgb.clone());
+        let lsrgb2: LinearSrgb = From::from(xyz);
+        assert!(lsrgb.r - lsrgb2.r < 0.00005);
+        assert!(lsrgb2.r - lsrgb.r < 0.00005);
+        assert!(lsrgb.g - lsrgb2.g < 0.00005);
+        assert!(lsrgb2.g - lsrgb.g < 0.00005);
+        assert!(lsrgb.b - lsrgb2.b < 0.00005);
+        assert!(lsrgb2.b - lsrgb.b < 0.00005);
+    }
+
+    #[test]
     fn test_xyz_to_srgb() {
+        // sample from https://au.mathworks.com/help/images/ref/xyz2rgb.html?s_tid=gn_loc_drop
         let xyz = Cie1931::new(0.25, 0.40, 0.10);
         let lsrgb: LinearSrgb = From::from(xyz);
         let srgb: Srgb = From::from(lsrgb);

@@ -15,6 +15,17 @@ impl Cie1931 {
             z: z,
         }
     }
+
+    pub fn get_luminance(&self) -> f32 {
+        self.y
+    }
+
+    pub fn set_luminance(&mut self, luminance: f32) {
+        let scale = luminance / self.y;
+        self.x *= scale;
+        self.y *= scale;
+        self.z *= scale;
+    }
 }
 
 // CIE 1931 xyY colorspace
@@ -48,10 +59,17 @@ impl From<Cie1931> for Cie1931xy {
 
 impl From<Cie1931xy> for Cie1931 {
     fn from(input: Cie1931xy) -> Cie1931 {
+        let out_x = input.x / input.y;
+        let out_z = (1.0 - input.x - input.y) / input.y;
+
+        // scale so that x, y, and z remain less than 1.0
+        let max = out_x.max(out_z);
+        let out_y = 1.0/max;
+
         Cie1931 {
-            x: input.x / input.y,
-            y: 1.0,
-            z: (1.0 - input.x - input.y) / input.y,
+            x: out_y * out_x,
+            y: out_y,
+            z: out_y * out_z,
         }
     }
 }
@@ -64,8 +82,12 @@ mod tests {
     #[test]
     fn cie1931_to_from() {
         let a = Cie1931::new(0.123, 1.0, 0.234);
+        let lum = a.get_luminance();
         let b: Cie1931xy = From::from(a.clone());
-        let c: Cie1931 = From::from(b);
+        let mut c: Cie1931 = From::from(b);
+        // converting through Cie1931xy necessarily loses the luminance
+        // We have to add it back.
+        c.set_luminance(lum);
 
         assert!(a.x - c.x < 0.000001);
         assert!(c.x - a.x < 0.000001);
