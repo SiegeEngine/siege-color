@@ -76,6 +76,13 @@ impl LinearSrgb {
         self.b *= scale;
         // WARNING: can go beyond 1.0
     }
+
+    pub fn set_max_brightness(&mut self) {
+        let scale = self.r.max(self.g).max(self.b);
+        self.r /= scale;
+        self.g /= scale;
+        self.b /= scale;
+    }
 }
 
 // Perhaps use the method here instead:
@@ -235,5 +242,22 @@ mod tests {
         assert!(srgb2.g - srgb.g < 0.000001);
         assert!(srgb.b - srgb2.b < 0.000001);
         assert!(srgb2.b - srgb.b < 0.000001);
+    }
+
+    #[test]
+    fn test_set_max_brightness() {
+        let mut lsrgb = LinearSrgb::new(0.1, 0.25, 0.5);
+        lsrgb.set_max_brightness();
+        assert!(lsrgb.r - 0.2 < 0.0000001);
+        assert!(0.2 - lsrgb.r < 0.0000001);
+        assert!(lsrgb.g - 0.5 < 0.0000001);
+        assert!(0.5 - lsrgb.g < 0.0000001);
+        assert!(lsrgb.b - 1.0 < 0.0000001);
+        assert!(1.0 - lsrgb.b < 0.0000001);
+
+        let mut lsrgb = LinearSrgb::new(1.5, 0.8234, 0.24);
+        lsrgb.set_max_brightness();
+        assert!(lsrgb.r - 1.0 < 0.0000001);
+        assert!(1.0 - lsrgb.r < 0.0000001);
     }
 }
