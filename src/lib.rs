@@ -1,4 +1,7 @@
 
+extern crate siege_math;
+extern crate float_cmp;
+
 pub mod colortemp;
 pub mod cie1931;
 pub mod srgb;
