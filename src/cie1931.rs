@@ -15,12 +15,12 @@ impl Illuminant for D65 { }
 /// Normalized to Y=1.0 (Not Y=100 !!!)
 #[derive(Debug, Clone)]
 pub struct Cie1931<I: Illuminant> {
-    pub v: Vec3<f64>,
+    pub v: Vec3<f32>,
     _phantom: PhantomData<I>
 }
 
 impl<I: Illuminant> Cie1931<I> {
-    pub fn new(x: f64, y: f64, z: f64) -> Cie1931<I> {
+    pub fn new(x: f32, y: f32, z: f32) -> Cie1931<I> {
         Cie1931 {
             v: Vec3::new(x, y, z),
             _phantom: Default::default()
@@ -28,23 +28,23 @@ impl<I: Illuminant> Cie1931<I> {
     }
 
     #[inline]
-    pub fn x(&self) -> f64 {
+    pub fn x(&self) -> f32 {
         self.v.x
     }
     #[inline]
-    pub fn y(&self) -> f64 {
+    pub fn y(&self) -> f32 {
         self.v.y
     }
     #[inline]
-    pub fn z(&self) -> f64 {
+    pub fn z(&self) -> f32 {
         self.v.z
     }
 
-    pub fn get_luminance(&self) -> f64 {
+    pub fn get_luminance(&self) -> f32 {
         self.v.y
     }
 
-    pub fn set_luminance(&mut self, luminance: f64) {
+    pub fn set_luminance(&mut self, luminance: f32) {
         let scale = luminance / self.v.y;
         self.v *= scale;
     }
@@ -53,7 +53,7 @@ impl<I: Illuminant> Cie1931<I> {
 impl From<Cie1931<D65>> for Cie1931<D50> {
     fn from(input: Cie1931<D65>) -> Cie1931<D50>
     {
-        let m: Mat3<f64> = Mat3::new(
+        let m: Mat3<f32> = Mat3::new(
             1.047844353856414, 0.022898981050086, -0.050206647741605,
             0.029549007606644, 0.990508028941971, -0.017074711360960,
             -0.009250984365223, 0.015072338237051, 0.751717835079977
@@ -69,7 +69,7 @@ impl From<Cie1931<D65>> for Cie1931<D50> {
 impl From<Cie1931<D50>> for Cie1931<D65> {
     fn from(input: Cie1931<D50>) -> Cie1931<D65>
     {
-        let m: Mat3<f64> = Mat3::new(
+        let m: Mat3<f32> = Mat3::new(
             0.9555491471339036, -0.02305395902610921, 0.0632967285241842,
             -0.028293615880275732, 1.009916725621172, 0.021049798533869513,
             0.012326727844429515, -0.020533074478247797, 1.3306432822046876
@@ -87,23 +87,23 @@ impl From<Cie1931<D50>> for Cie1931<D65> {
 // FIXME - is this type parameterized by an illuminant?
 #[derive(Debug, Clone)]
 pub struct Cie1931xy {
-    pub v: Vec2<f64>
+    pub v: Vec2<f32>
 }
 
 impl Cie1931xy {
-    pub fn new(x: f64, y: f64) -> Cie1931xy {
+    pub fn new(x: f32, y: f32) -> Cie1931xy {
         Cie1931xy {
             v: Vec2::new(x, y)
         }
     }
 
-    pub fn x(&self) -> f64 {
+    pub fn x(&self) -> f32 {
         self.v.x
     }
-    pub fn y(&self) -> f64 {
+    pub fn y(&self) -> f32 {
         self.v.y
     }
-    pub fn z(&self) -> f64 {
+    pub fn z(&self) -> f32 {
         1.0 - self.v.x - self.v.y
     }
 }

@@ -1,12 +1,12 @@
 
-pub struct StarMagnitude(pub f64);
+pub struct StarMagnitude(pub f32);
 
 impl StarMagnitude {
-    pub fn to_brightness(&self) -> f64 {
-        (10.0_f64).powf(-self.0 * 0.4)
+    pub fn to_brightness(&self) -> f32 {
+        (10.0_f32).powf(-self.0 * 0.4)
     }
 
-    pub fn from_brightness(brightness: f64) -> StarMagnitude {
+    pub fn from_brightness(brightness: f32) -> StarMagnitude {
         StarMagnitude(-2.5 * brightness.log10())
     }
 }

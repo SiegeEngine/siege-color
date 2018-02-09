@@ -24,79 +24,79 @@ impl From<Srgb> for Srgb24 {
 impl From<Srgb24> for Srgb {
     fn from(srgb24: Srgb24) -> Srgb {
         Srgb::new(
-            srgb24.0 as f64 / 255.0,
-            srgb24.1 as f64 / 255.0,
-            srgb24.2 as f64 / 255.0
+            srgb24.0 as f32 / 255.0,
+            srgb24.1 as f32 / 255.0,
+            srgb24.2 as f32 / 255.0
         )
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct Srgb {
-    pub v: Vec3<f64>
+    pub v: Vec3<f32>
 }
 
 impl Srgb {
-    pub fn new(r: f64, g: f64, b: f64) -> Srgb {
+    pub fn new(r: f32, g: f32, b: f32) -> Srgb {
         Srgb {
             v: Vec3::new(r, g, b)
         }
     }
 
     #[inline]
-    pub fn r(&self) -> f64 {
+    pub fn r(&self) -> f32 {
         self.v.x
     }
     #[inline]
-    pub fn g(&self) -> f64 {
+    pub fn g(&self) -> f32 {
         self.v.y
     }
     #[inline]
-    pub fn b(&self) -> f64 {
+    pub fn b(&self) -> f32 {
         self.v.z
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct LinearSrgb {
-    pub v: Vec3<f64>
+    pub v: Vec3<f32>
 }
 
 impl LinearSrgb {
-    pub fn new(r: f64, g: f64, b: f64) -> LinearSrgb {
+    pub fn new(r: f32, g: f32, b: f32) -> LinearSrgb {
         LinearSrgb {
             v: Vec3::new(r, g, b)
         }
     }
 
     #[inline]
-    pub fn r(&self) -> f64 {
+    pub fn r(&self) -> f32 {
         self.v.x
     }
     #[inline]
-    pub fn g(&self) -> f64 {
+    pub fn g(&self) -> f32 {
         self.v.y
     }
     #[inline]
-    pub fn b(&self) -> f64 {
+    pub fn b(&self) -> f32 {
         self.v.z
     }
 
-    pub fn get_luminance(&self) -> f64
+    pub fn get_luminance(&self) -> f32
     {
         // middle row of From<LinearSrgb> for Cie1931
-        Vec3::<f64>::new(0.2126729,
+        Vec3::<f32>::new(0.2126729,
                          0.7151522,
                          0.0721750).dot(self.v)
     }
 
-    pub fn get_brightness(&self) -> f64
+    pub fn get_brightness(&self) -> f32
     {
         // source???
         0.299 * self.r()  +  0.587 * self.g()  +  0.114 * self.b()
     }
 
-    pub fn set_brightness(&mut self, brightness: f64) {
+    pub fn set_brightness(&mut self, brightness: f32) {
         let original = self.get_brightness();
         let scale = brightness / original;
         self.v *= scale;
@@ -123,16 +123,16 @@ impl From<Cie1931<D65>> for LinearSrgb {
         /*
         // Tristimulus value normalization (sRGB spec section 6)
         // PRESUMES Y=100 !!!!!
-        let n: Vec3<f64> = Vec3::new(
+        let n: Vec3<f32> = Vec3::new(
             input.v.x - 0.1901,
             input.v.y - 0.2,
             input.v.z - 0.2178) * 0.0125313;
          */
 
-        let m: Mat3<f64> = Mat3::new(
-            3.2406255, -1.537208, -0.4986286,
-            -0.9689307, 1.8757561, 0.0415175,
-            0.0557101, -0.2040211, 1.0569959
+        let m: Mat3<f32> = Mat3::new(
+            3.2406255, -1.5372080, -0.49862860,
+            -0.96893071, 1.8757561, 0.041517524,
+            0.055710120, -0.20402105, 1.0569959
         );
 
         LinearSrgb {
@@ -146,11 +146,11 @@ impl From<LinearSrgb> for Cie1931<D65> {
         // From https://en.wikipedia.org/wiki/SRGB and
         // https://www.image-engineering.de/library/technotes/958-how-to-convert-between-srgb-and-ciexyz
         // Reference point of D65 (as defined by sRGB) -- be warned, ICC profiles use D50.
-        // INVERSE OF ABOVE MATRIX
-        let m: Mat3<f64> = Mat3::new(
-            0.4123999971730992, 0.3576000026510085, 0.18050001435233873,
-            0.21259999073612257, 0.7151999842346092, 0.07220001553015049,
-            0.019300017045913293, 0.11920004192621718, 0.9505000471041641
+        // (These values are exact. The above matrix is an inverse of this.)
+        let m: Mat3<f32> = Mat3::new(
+            0.4124, 0.3576, 0.1805,
+            0.2126, 0.7152, 0.0722,
+            0.0193, 0.1192, 0.9505
         );
 
         let cv = &m * &input.v;
@@ -164,7 +164,7 @@ impl From<LinearSrgb> for Cie1931<D65> {
 //   https://en.wikipedia.org/w/index.php?title=CIE_1931_color_space&action=edit&section=13
 impl From<Srgb> for LinearSrgb {
     fn from(srgb: Srgb) -> LinearSrgb {
-        let f = |x: f64| -> f64 {
+        let f = |x: f32| -> f32 {
             if x <= 0.04045 { x / 12.92 }
             else { ((x + 0.055)/1.055).powf(2.4) }
         };
@@ -187,7 +187,7 @@ impl From<LinearSrgb> for Srgb {
     // Assumes the 2-degree colorimetric observer
     fn from(s: LinearSrgb) -> Srgb {
         let a = 0.055;
-        let f = |x: f64| -> f64 {
+        let f = |x: f32| -> f32 {
             if x <= 0.0031308 { 12.92 * x }
             else { (1.0 + a) * x.powf(1.0/2.4) - a }
         };
@@ -272,7 +272,7 @@ mod tests {
         let mut lsrgb = LinearSrgb::new(0.1, 0.25, 0.5);
         lsrgb.set_max_brightness();
 
-        assert!(lsrgb.v.approx_eq_ulps(&Vec3::<f64>::new(0.2, 0.5, 1.0), 10));
+        assert!(lsrgb.v.approx_eq_ulps(&Vec3::<f32>::new(0.2, 0.5, 1.0), 10));
 
         let mut lsrgb = LinearSrgb::new(1.5, 0.8234, 0.24);
         lsrgb.set_max_brightness();

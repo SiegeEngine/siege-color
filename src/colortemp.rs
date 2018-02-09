@@ -21,17 +21,17 @@ impl ColorTemp {
         if self.0 < 1667 { return None; }
         if self.0 > 25000 { return None; }
 
-        let ct = self.0 as f64;
+        let ct = self.0 as f32;
 
         let x = if ct < 4000.0 {
-            -0.2661239 * (10.0_f64).powi(9) / ct.powi(3)
-                - 0.2343580 * (10.0_f64).powi(6) / ct.powi(2)
-                + 0.8776956 * (10.0_f64).powi(3) / ct
+            -0.2661239 * (10.0_f32).powi(9) / ct.powi(3)
+                - 0.2343580 * (10.0_f32).powi(6) / ct.powi(2)
+                + 0.8776956 * (10.0_f32).powi(3) / ct
                 + 0.179910
         } else {
-            -3.0258469 * (10.0_f64).powi(9) / ct.powi(3)
-                + 2.1070379 * (10.0_f64).powi(6) / ct.powi(2)
-                + 0.2226347 * (10.0_f64).powi(3) / ct
+            -3.0258469 * (10.0_f32).powi(9) / ct.powi(3)
+                + 2.1070379 * (10.0_f32).powi(6) / ct.powi(2)
+                + 0.2226347 * (10.0_f32).powi(3) / ct
                 + 0.240390
         };
         let y = if ct < 2222.0 {
