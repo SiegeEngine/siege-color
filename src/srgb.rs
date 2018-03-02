@@ -224,7 +224,7 @@ impl From<LinearSrgb> for Srgb {
 mod tests {
     use super::*;
     use cie1931::{Cie1931, D65};
-    use float_cmp::ApproxEqUlps;
+    use float_cmp::ApproxEq;
 
     #[test]
     fn test_scale_brightness() {
@@ -256,7 +256,7 @@ mod tests {
         let xyz: Cie1931<D65> = From::from(lsrgb.clone());
         let lsrgb2: LinearSrgb = From::from(xyz);
 
-        assert!(lsrgb.v.approx_eq_ulps(&lsrgb2.v, 10));
+        assert!(lsrgb.v.approx_eq(&lsrgb2.v, 10, 10.0 * ::std::f32::EPSILON));
     }
 
     #[test]
@@ -278,7 +278,7 @@ mod tests {
         let l: LinearSrgb = From::from(srgb.clone());
         let srgb2: Srgb = From::from(l);
 
-        assert!(srgb.v.approx_eq_ulps(&srgb2.v, 10));
+        assert!(srgb.v.approx_eq(&srgb2.v, 10, 10.0 * ::std::f32::EPSILON));
     }
 
     #[test]
@@ -286,10 +286,14 @@ mod tests {
         let mut lsrgb = LinearSrgb::new(0.1, 0.25, 0.5);
         lsrgb.set_max_brightness();
 
-        assert!(lsrgb.v.approx_eq_ulps(&Vec3::<f32>::new(0.2, 0.5, 1.0), 10));
+        assert!(lsrgb.v.approx_eq(
+            &Vec3::<f32>::new(0.2, 0.5, 1.0),
+            10, 10.0 * ::std::f32::EPSILON));
 
         let mut lsrgb = LinearSrgb::new(1.5, 0.8234, 0.24);
         lsrgb.set_max_brightness();
-        assert!(lsrgb.r().approx_eq_ulps(&1.0, 10));
+        assert!(lsrgb.r().approx_eq(&1.0,
+                                    10,
+                                    10.0 * ::std::f32::EPSILON));
     }
 }

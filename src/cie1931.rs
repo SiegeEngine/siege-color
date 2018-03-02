@@ -152,7 +152,7 @@ mod tests {
         let c2: Cie1931<D65> = From::from(c1.clone());
         let c3: Cie1931<D50> = From::from(c2);
 
-        use float_cmp::ApproxEqUlps;
-        assert!( c1.v.approx_eq_ulps(&c3.v, 10) );
+        use float_cmp::ApproxEq;
+        assert!( c1.v.approx_eq(&c3.v, 10, 10.0 * ::std::f32::EPSILON) );
     }
 }
