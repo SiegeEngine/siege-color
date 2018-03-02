@@ -90,6 +90,20 @@ impl LinearSrgb {
                          0.0721750).dot(self.v)
     }
 
+    // For luminance values > 1.0, this saturates to white (e.g. each
+    // channel scales linearly and then clamps at 1.0)
+    pub fn set_luminance(&mut self, luminance: f32) {
+        // no negative values
+        let newlum = if luminance < 0.0 { 0.0 } else { luminance };
+
+        let oldlum: f32 = self.get_luminance();
+        if oldlum==0.0 { return; } // black is gonna stay black, and we cant divide by zero
+        let scale: f32 = newlum/oldlum;
+        self.v.x = (self.v.x * scale).min(1.0);
+        self.v.y = (self.v.y * scale).min(1.0);
+        self.v.z = (self.v.z * scale).min(1.0);
+    }
+
     pub fn get_brightness(&self) -> f32
     {
         // source???
