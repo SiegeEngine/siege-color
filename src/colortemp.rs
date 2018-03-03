@@ -1,5 +1,5 @@
 
-use cie1931::Cie1931xy;
+use cie1931::Cie1931xyY;
 
 // Color Temperature in Kelvin
 #[derive(Debug, Clone, Copy)]
@@ -12,7 +12,8 @@ impl ColorTemp {
 }
 
 impl ColorTemp {
-    pub fn to_cie1931xy(&self) -> Option<Cie1931xy>
+    #[allow(non_snake_case)]
+    pub fn to_cie1931xyY(&self) -> Option<Cie1931xyY>
     {
         // We use the Planckian locus to compute this, using the approximation
         // given in https://en.wikipedia.org/wiki/Planckian_locus
@@ -51,7 +52,7 @@ impl ColorTemp {
                 - 0.37001483
         };
 
-        Some(Cie1931xy::new(x, y))
+        Some(Cie1931xyY::new(x, y, 1.0))
     }
 }
 
@@ -62,21 +63,21 @@ mod tests {
     #[test]
     fn test_planckian_locus() {
         let ct = ColorTemp::new(2222);
-        let xy = ct.to_cie1931xy().unwrap();
+        let xy = ct.to_cie1931xyY().unwrap();
         assert!(xy.v.x > 0.5030);
         assert!(xy.v.x < 0.5035);
         assert!(xy.v.y > 0.4151);
         assert!(xy.v.y < 0.4154);
 
         let ct = ColorTemp::new(4000);
-        let xy = ct.to_cie1931xy().unwrap();
+        let xy = ct.to_cie1931xyY().unwrap();
         assert!(xy.v.x > 0.3802);
         assert!(xy.v.x < 0.3807);
         assert!(xy.v.y > 0.3766);
         assert!(xy.v.y < 0.3769);
 
         let ct = ColorTemp::new(10000);
-        let xy = ct.to_cie1931xy().unwrap();
+        let xy = ct.to_cie1931xyY().unwrap();
         assert!(xy.v.x > 0.2805);
         assert!(xy.v.x < 0.2808);
         assert!(xy.v.y > 0.2882);

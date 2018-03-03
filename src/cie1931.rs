@@ -1,13 +1,16 @@
 
 use std::marker::PhantomData;
-use siege_math::{Vec3, Vec2, Mat3};
+use siege_math::{Vec3, Mat3};
 
 #[derive(Debug, Clone, Copy)]
 pub struct D50;
 #[derive(Debug, Clone, Copy)]
+pub struct D60;
+#[derive(Debug, Clone, Copy)]
 pub struct D65;
 pub trait Illuminant { }
 impl Illuminant for D50 { }
+impl Illuminant for D60 { }
 impl Illuminant for D65 { }
 
 
@@ -86,43 +89,47 @@ impl From<Cie1931<D50>> for Cie1931<D65> {
 // CIE 1931xy colorspace
 // FIXME - is this type parameterized by an illuminant?
 #[derive(Debug, Clone)]
-pub struct Cie1931xy {
-    pub v: Vec2<f32>
+pub struct Cie1931xyY {
+    pub v: Vec3<f32>
 }
 
-impl Cie1931xy {
-    pub fn new(x: f32, y: f32) -> Cie1931xy {
-        Cie1931xy {
-            v: Vec2::new(x, y)
+impl Cie1931xyY {
+    #[allow(non_snake_case)]
+    pub fn new(x: f32, y: f32, Y: f32) -> Cie1931xyY {
+        Cie1931xyY {
+            v: Vec3::new(x, y, Y)
         }
     }
 
     pub fn x(&self) -> f32 {
-        self.v.x
+        self.v[0]
     }
     pub fn y(&self) -> f32 {
-        self.v.y
+        self.v[1]
     }
     pub fn z(&self) -> f32 {
-        1.0 - self.v.x - self.v.y
+        self.v[2]
     }
 }
 
-impl From<Cie1931<D65>> for Cie1931xy {
-    fn from(input: Cie1931<D65>) -> Cie1931xy {
-        Cie1931xy::new(
-            input.v.x / (input.v.x + input.v.y + input.v.z),
-            input.v.y / (input.v.x + input.v.y + input.v.z)
+impl From<Cie1931<D65>> for Cie1931xyY {
+    fn from(input: Cie1931<D65>) -> Cie1931xyY {
+        let mut divisor: f32 = input.v[0] + input.v[1] + input.v[2];
+        if divisor==0.0 { divisor = 1e-10; }
+        Cie1931xyY::new(
+            input.v[0] / divisor,
+            input.v[1] / divisor,
+            input.v[1]
         )
     }
 }
 
-impl From<Cie1931xy> for Cie1931<D65> {
-    fn from(input: Cie1931xy) -> Cie1931<D65> {
+impl From<Cie1931xyY> for Cie1931<D65> {
+    fn from(input: Cie1931xyY) -> Cie1931<D65> {
         Cie1931::new(
-            input.v.x / input.v.y,
-            1.0,
-            (1.0 - input.v.x - input.v.y) / input.v.y
+            input.v[0] * input.v[2] / input.v[1].max(1e-10),
+            input.v[2],
+            (1.0 - input.v[0] - input.v[1]) * input.v[2] / input.v[1].max(1e-10)
         )
     }
 }
@@ -135,15 +142,15 @@ mod tests {
     #[test]
     fn cie1931_to_from() {
         let a = Cie1931::<D65>::new(0.123, 1.0, 0.234);
-        let b: Cie1931xy = From::from(a.clone());
+        let b: Cie1931xyY = From::from(a.clone());
         let c: Cie1931<D65> = From::from(b);
 
-        assert!(a.v.x - c.v.x < 0.000001);
-        assert!(c.v.x - a.v.x < 0.000001);
-        assert!(a.v.y - c.v.y < 0.000001);
-        assert!(c.v.y - a.v.y < 0.000001);
-        assert!(a.v.z - c.v.z < 0.000001);
-        assert!(c.v.z - a.v.z < 0.000001);
+        assert!(a.v[0] - c.v[0] < 0.000001);
+        assert!(c.v[0] - a.v[0] < 0.000001);
+        assert!(a.v[1] - c.v[1] < 0.000001);
+        assert!(c.v[1] - a.v[1] < 0.000001);
+        assert!(a.v[2] - c.v[2] < 0.000001);
+        assert!(c.v[2] - a.v[2] < 0.000001);
     }
 
     #[test]

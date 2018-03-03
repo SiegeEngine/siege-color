@@ -2,16 +2,22 @@
 extern crate siege_math;
 extern crate float_cmp;
 
+pub mod chromaticities;
 pub mod colortemp;
 pub mod cie1931;
 pub mod srgb;
 pub mod lms;
+pub mod aces;
+pub mod rec2020;
 pub mod star_magnitude;
 
+pub use chromaticities::*;
 pub use colortemp::*;
 pub use cie1931::*;
 pub use srgb::*;
 pub use lms::*;
+pub use aces::*;
+pub use rec2020::*;
 pub use star_magnitude::*;
 
 // Converts watts-or-lumens/sq-meter to an RGB value from 0.0 to 1.0

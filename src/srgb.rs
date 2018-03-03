@@ -1,6 +1,14 @@
 
-use siege_math::{Vec3, Mat3};
+use siege_math::{Vec2, Vec3, Mat3};
 use cie1931::{Cie1931, D65};
+use super::Chromaticity;
+
+pub const SRGB_CHROMATICITIES: Chromaticity = Chromaticity {
+    red:   Vec2 { x: 0.64000, y: 0.33000 },
+    green: Vec2 { x: 0.30000, y: 0.60000 },
+    blue:  Vec2 { x: 0.15000, y: 0.06000 },
+    white: Vec2 { x: 0.31270, y: 0.32900 }
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Srgb24(pub u8, pub u8, pub u8);
