@@ -5,11 +5,13 @@ extern crate float_cmp;
 pub mod colortemp;
 pub mod cie1931;
 pub mod srgb;
+pub mod lms;
 pub mod star_magnitude;
 
 pub use colortemp::*;
 pub use cie1931::*;
 pub use srgb::*;
+pub use lms::*;
 pub use star_magnitude::*;
 
 // Converts watts-or-lumens/sq-meter to an RGB value from 0.0 to 1.0
