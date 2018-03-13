@@ -1,6 +1,6 @@
 [package]
 name = "siege-color"
-version = "0.3.0-unstable"
+version = "0.3.0"
 authors = ["Mike Dilger <mike@optcomp.nz>"]
 
 [dependencies]
