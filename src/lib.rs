@@ -9,7 +9,6 @@ pub mod srgb;
 pub mod lms;
 pub mod aces;
 pub mod rec2020;
-pub mod star_magnitude;
 
 pub use chromaticities::*;
 pub use colortemp::*;
@@ -18,7 +17,6 @@ pub use srgb::*;
 pub use lms::*;
 pub use aces::*;
 pub use rec2020::*;
-pub use star_magnitude::*;
 
 // Converts watts-or-lumens/sq-meter to an RGB value from 0.0 to 1.0
 // using the given white_point, and presuming a 100,000:1 contrast ratio
