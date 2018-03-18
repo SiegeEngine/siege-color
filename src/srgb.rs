@@ -142,6 +142,13 @@ impl From<Cie1931<D65>> for LinearSrgb {
         //           D65 White Point (x = 0.3127, y = 0.3290, z = 0.3583)
         //           White Point Luminance: 80 cd/m^2
 
+        // Each display device is different. Exact values differ depending on the
+        // source you are looking at. Physically Based Rendering book as slightly
+        // different values using RGB definitions for HD television.
+        //    3.240479  -1.537150  -0.498535
+        //   -0.969256   1.875991   0.041556
+        //    0.055648  -0.204043   1.057311
+
         /*
         // Tristimulus value normalization (sRGB spec section 6)
         // PRESUMES Y=100 !!!!!
@@ -174,6 +181,12 @@ impl From<LinearSrgb> for Cie1931<D65> {
             0.2126, 0.7152, 0.0722,
             0.0193, 0.1192, 0.9505
         );
+
+        // Physically Based Rendering book uses slightly different values using RGB
+        // definitions for HD television.
+        //     0.412453   0.357580   0.180423
+        //     0.212671   0.715160   0.072169
+        //     0.019334   0.119193   0.950227
 
         let cv = &m * &input.v;
 
