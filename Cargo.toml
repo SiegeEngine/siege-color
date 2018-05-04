@@ -1,8 +1,14 @@
 [package]
 name = "siege-color"
-version = "0.4.0-unstable"
+version = "0.4.0"
 authors = ["Mike Dilger <mike@optcomp.nz>"]
+description = "Color management library for the Siege Engine"
+repository = "https://github.com/SiegeEngine/siege-color"
+documentation = "https://docs.rs/siege-color"
+readme = "README.md"
+keywords = [ "siege", "color" ]
+license = "MIT"
 
 [dependencies]
-siege-math = { git = "ssh://mike@git.gnomonicgames.com/data/git/siege-math.git" }
+siege-math = "0.5"
 float-cmp = "0.4"
