@@ -278,11 +278,10 @@ mod tests {
         let lsrgb2: LinearSrgb = From::from(xyz);
 
         assert!(
-          lsrgb.v.approx_eq(
-            &lsrgb2.v,
-            10.0,
-            (10.0 * f32::EPSILON) as i32,
-          )
+            lsrgb.v.approx_eq(
+                &lsrgb2.v,
+                (10.0 * f32::EPSILON, 10)
+            )
         );
     }
 
@@ -306,11 +305,10 @@ mod tests {
         let srgb2: Srgb = From::from(l);
 
         assert!(
-          srgb.v.approx_eq(
-            &srgb2.v,
-            10.0,
-            (10.0 * f32::EPSILON) as i32,
-          )
+            srgb.v.approx_eq(
+                &srgb2.v,
+                (10.0 * f32::EPSILON, 10),
+            )
         );
     }
 
@@ -319,21 +317,30 @@ mod tests {
         let mut lsrgb = LinearSrgb::new(0.1, 0.25, 0.5);
         lsrgb.set_max_brightness();
 
-        assert!(lsrgb.v.approx_eq(
-            &Vec3::<f32>::new(0.2, 0.5, 1.0),
-            10.0,
-            (10.0 * f32::EPSILON) as i32,
-        ));
+        assert!(
+            lsrgb.v.approx_eq(
+                &Vec3::<f32>::new(0.2, 0.5, 1.0),
+                (10.0 * f32::EPSILON, 10)
+            )
+        );
 
         let mut lsrgb = LinearSrgb::new(1.5, 0.8234, 0.24);
         lsrgb.set_max_brightness();
 
         assert!(
-          lsrgb.r().approx_eq(
-            &1.0,
-            10.0,
-            (10.0 * f32::EPSILON) as i32,
-          )
+            lsrgb.r().approx_eq(
+                1.0,
+                (10.0 * f32::EPSILON, 10)
+            )
+        );
+
+        let mut lsrgb = LinearSrgb::new(1.5, 0.8234, 0.24);
+        lsrgb.set_max_brightness();
+        assert!(
+            lsrgb.r().approx_eq(
+                1.0,
+                (10.0 * ::std::f32::EPSILON, 10)
+            )
         );
     }
 }

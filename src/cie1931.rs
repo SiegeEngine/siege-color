@@ -161,11 +161,10 @@ mod tests {
 
         use float_cmp::ApproxEq;
         assert!(
-          c1.v.approx_eq(
-            &c3.v,
-            10.0,
-            (10.0 * f32::EPSILON) as i32,
-          )
+            c1.v.approx_eq(
+                &c3.v,
+                (10.0 * f32::EPSILON, 10 as i32)
+            )
         );
     }
 }
