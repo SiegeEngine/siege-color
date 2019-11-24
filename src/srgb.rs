@@ -1,6 +1,6 @@
 
 use siege_math::{Vec2, Vec3, Mat3};
-use cie1931::{Cie1931, D65};
+use crate::cie1931::{Cie1931, D65};
 use super::Chromaticity;
 
 pub const SRGB_CHROMATICITIES: Chromaticity = Chromaticity {
@@ -244,7 +244,7 @@ impl From<LinearSrgb> for Srgb {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cie1931::{Cie1931, D65};
+    use crate::cie1931::{Cie1931, D65};
     use float_cmp::ApproxEq;
 
     #[test]

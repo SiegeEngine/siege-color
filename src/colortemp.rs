@@ -1,5 +1,5 @@
 
-use cie1931::Cie1931xyY;
+use crate::cie1931::Cie1931xyY;
 
 // Color Temperature in Kelvin
 #[derive(Debug, Clone, Copy)]

@@ -1,6 +1,6 @@
 
 use siege_math::{Vec2, Vec3, Mat3};
-use cie1931::{Cie1931, D60};
+use crate::cie1931::{Cie1931, D60};
 use super::Chromaticity;
 
 pub const ACES_AP0_CHROMATICITIES: Chromaticity = Chromaticity {

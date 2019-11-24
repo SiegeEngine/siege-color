@@ -1,7 +1,4 @@
 
-extern crate siege_math;
-extern crate float_cmp;
-
 pub mod chromaticities;
 pub mod colortemp;
 pub mod cie1931;
@@ -10,13 +7,13 @@ pub mod lms;
 pub mod aces;
 pub mod rec2020;
 
-pub use chromaticities::*;
-pub use colortemp::*;
-pub use cie1931::*;
-pub use srgb::*;
-pub use lms::*;
-pub use aces::*;
-pub use rec2020::*;
+pub use crate::chromaticities::*;
+pub use crate::colortemp::*;
+pub use crate::cie1931::*;
+pub use crate::srgb::*;
+pub use crate::lms::*;
+pub use crate::aces::*;
+pub use crate::rec2020::*;
 
 // Converts watts-or-lumens/sq-meter to an RGB value from 0.0 to 1.0
 // using the given white_point, and presuming a 100,000:1 contrast ratio

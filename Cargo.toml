@@ -8,6 +8,7 @@ documentation = "https://docs.rs/siege-color"
 readme = "README.md"
 keywords = [ "siege", "color" ]
 license = "MIT"
+edition = "2018"
 
 [dependencies]
 siege-math = "0.5"
