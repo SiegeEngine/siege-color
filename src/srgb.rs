@@ -277,7 +277,13 @@ mod tests {
         let xyz: Cie1931<D65> = From::from(lsrgb.clone());
         let lsrgb2: LinearSrgb = From::from(xyz);
 
-        assert!(lsrgb.v.approx_eq(&lsrgb2.v, 10, 10.0 * ::std::f32::EPSILON));
+        assert!(
+          lsrgb.v.approx_eq(
+            &lsrgb2.v,
+            10.0,
+            (10.0 * f32::EPSILON) as i32,
+          )
+        );
     }
 
     #[test]
@@ -299,7 +305,13 @@ mod tests {
         let l: LinearSrgb = From::from(srgb.clone());
         let srgb2: Srgb = From::from(l);
 
-        assert!(srgb.v.approx_eq(&srgb2.v, 10, 10.0 * ::std::f32::EPSILON));
+        assert!(
+          srgb.v.approx_eq(
+            &srgb2.v,
+            10.0,
+            (10.0 * f32::EPSILON) as i32,
+          )
+        );
     }
 
     #[test]
@@ -309,12 +321,19 @@ mod tests {
 
         assert!(lsrgb.v.approx_eq(
             &Vec3::<f32>::new(0.2, 0.5, 1.0),
-            10, 10.0 * ::std::f32::EPSILON));
+            10.0,
+            (10.0 * f32::EPSILON) as i32,
+        ));
 
         let mut lsrgb = LinearSrgb::new(1.5, 0.8234, 0.24);
         lsrgb.set_max_brightness();
-        assert!(lsrgb.r().approx_eq(&1.0,
-                                    10,
-                                    10.0 * ::std::f32::EPSILON));
+
+        assert!(
+          lsrgb.r().approx_eq(
+            &1.0,
+            10.0,
+            (10.0 * f32::EPSILON) as i32,
+          )
+        );
     }
 }

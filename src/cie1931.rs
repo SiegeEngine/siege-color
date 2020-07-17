@@ -160,6 +160,12 @@ mod tests {
         let c3: Cie1931<D50> = From::from(c2);
 
         use float_cmp::ApproxEq;
-        assert!( c1.v.approx_eq(&c3.v, 10, 10.0 * ::std::f32::EPSILON) );
+        assert!(
+          c1.v.approx_eq(
+            &c3.v,
+            10.0,
+            (10.0 * f32::EPSILON) as i32,
+          )
+        );
     }
 }
